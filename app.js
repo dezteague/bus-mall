@@ -92,7 +92,7 @@ function handleImageClicks(event) {
 
   for (var i = 0; i < allProducts.length; i++) {
     if (event.target.alt === allProducts[i].name) {
-      allProducts[i].votes++; //counting views for each product
+      allProducts[i].votes++; //counting votes for each product
     }
   }
 }
@@ -111,3 +111,49 @@ randomImage();// call randomImages
 firstImage.addEventListener('click', handleImageClicks);
 secondImage.addEventListener('click', handleImageClicks);
 thirdImage.addEventListener('click', handleImageClicks);
+
+//CREATE CHART
+var productsEl = document.getElementById('main-container');
+
+for(var i =0; i < allProducts.length; i++){
+  var pEl = document.createElement('p');
+  pEl.textContent = allProducts[i];
+
+  pEl.style.color = allProducts[i];
+  pEl.id = allProducts[i];
+
+  allProductsEl.appendChild(pEl);
+}
+
+var chartConfiguration = {
+  type: 'bar',
+  data: {
+    labels: names,
+    datasets: [{
+      label: 'Votes',
+      data: new Array(allProducts.length).fill(0),
+      backgroundColor: [
+        'red',
+        'orange',
+        'yellow',
+        'green',
+        'blue',
+        'indigo',
+        'violet',
+        '#790e08',
+        '#7d443d',
+        '#89a5bb',
+        '#ab831b',
+        '#ead83c',
+        '#22d7a5',
+        '#760567',
+        '#52f6bf',
+        '#30a702',
+        '#534317',
+        '#cf7e0b',
+        '#3017ec',
+        '#4f7c9a'
+      ],
+    }]
+  }
+};
