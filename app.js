@@ -118,7 +118,6 @@ function displayResults() {// CREATE CHART comparing names (of all products) and
         label: 'Votes', //the label 'votes' will be displayed on the graph
         data: votes,
         backgroundColor: [
-          '#000000',
           '#003333',
           '#006666',
           '#009999',
@@ -128,6 +127,7 @@ function displayResults() {// CREATE CHART comparing names (of all products) and
           '#66ffff',
           '#99ffff',
           '#ccffff',
+          '#999999',
           '#ffffcc',
           '#ccffeb',
           '#99ffd6',
@@ -152,9 +152,36 @@ function displayResults() {// CREATE CHART comparing names (of all products) and
     }
   };
 
-return new Chart(ctx, chartConfig);
-}
+  var myChart = new Chart(ctx, chartConfig);
 
-firstImage.addEventListener('click', handleImageClicks);
-secondImage.addEventListener('click', handleImageClicks);
-thirdImage.addEventListener('click', handleImageClicks);
+  //LOCAL STORAGE FLOW:
+  //  0. have data
+  //  1. encode data [stringify]
+  //  2. SET json data in local Storage
+  //  3. GET jason data from local storage [upon page refresh]
+  //  4. decode to javascript [parse]
+
+
+  if (localStorage.getItem('voteData')) {
+    var voteData = localStorage.getItem('voteData');
+    myChart.data.datasets[0].data = JSON.parse(voteData);
+
+    myChart.update();
+  }
+
+  firstImage.addEventListener('click', handleImageClicks);
+  secondImage.addEventListener('click', handleImageClicks);
+  thirdImage.addEventListener('click', handleImageClicks);
+
+  var pId = event.target.id;
+  var idx = colors.indexOf(pId);
+
+  if (idx !== -1) {
+    myChart.data.datasets[0].data[idx] += 1;
+    console.log(myChart.data.datasets[0].data);
+    myChart.update();
+
+    var jsonData = JSON.stringify(myChart.data.datasets[0].data);
+    localStorage.setItem('voteData', jsonData);
+  }
+}
