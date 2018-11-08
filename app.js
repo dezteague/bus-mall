@@ -1,5 +1,7 @@
 'use strict';
 
+//global variables
+var ctx = document.getElementById('myChart').getContext('2d');
 var totalClicks = 0;// this counter will eventually stop at 25 clicks
 var allProducts = []; //this array will hold all new instances of products which will be used later
 var previouslyDisplayed = []; //this array will hold sets of three images which will later be used to make sure there are no duplicates immediately after a set
@@ -7,13 +9,12 @@ var previouslyDisplayed = []; //this array will hold sets of three images which 
 var firstImage = document.getElementById('first');
 var secondImage = document.getElementById('second');
 var thirdImage = document.getElementById('third');
-var results = document.getElementById('results'); //this variable is a placeholder that will display voter results in html
+// var results = document.getElementById('results'); //this variable is a placeholder that will display voter results in html
 
 //this constructor will produce name, image, votes, and views for each new product
-function Product(name, imagePath, altText) {
+function Product(name, imagePath) {
   this.name = name; //name of the product
   this.imagePath = imagePath; //path to image file
-  this.altText = altText; //alternate text identifier
   this.votes = 0; //counter for product votes
   this.views = 0; //counter for product views
 
@@ -21,26 +22,26 @@ function Product(name, imagePath, altText) {
 }
 //new product instantiates a new object for each image
 //each product contains (name, imagePath)
-new Product('bag', './img/bag.jpg', 'bag');
-new Product('banana', './img/banana.jpg', 'banana');
-new Product('bathroom', './img/bathroom.jpg', 'bathroom');
-new Product('boots', './img/boots.jpg', 'boots');
-new Product('breakfast', './img/breakfast.jpg', 'breakfast');
-new Product('bubblegum', './img/bubblegum.jpg', 'bubblegum');
-new Product('chair', './img/chair.jpg', 'chair');
-new Product('cthulhu', './img/cthulhu.jpg', 'cthulhu');
-new Product('dog-duck', './img/dog-duck.jpg', 'dog-duck');
-new Product('dragon', './img/dragon.jpg', 'dragon');
-new Product('pen', './img/pen.jpg', 'pen');
-new Product('pet-sweep', './img/pet-sweep.jpg', 'pet-sweep');
-new Product('scissors', './img/scissors.jpg', 'scissors');
-new Product('shark', './img/shark.jpg', 'shark');
-new Product('sweep', './img/sweep.png', 'sweep');
-new Product('tauntaun', './img/tauntaun.jpg', 'tauntaun');
-new Product('unicorn', './img/unicorn.jpg', 'unicorn');
-new Product('usb', './img/usb.gif', 'usb');
-new Product('water-can', './img/water-can.jpg', 'water-can');
-new Product('wine-glass', './img/wine-glass.jpg', 'wine-glass');
+new Product('bag', './img/bag.jpg');
+new Product('banana', './img/banana.jpg');
+new Product('bathroom', './img/bathroom.jpg');
+new Product('boots', './img/boots.jpg');
+new Product('breakfast', './img/breakfast.jpg');
+new Product('bubblegum', './img/bubblegum.jpg');
+new Product('chair', './img/chair.jpg');
+new Product('cthulhu', './img/cthulhu.jpg');
+new Product('dog-duck', './img/dog-duck.jpg');
+new Product('dragon', './img/dragon.jpg');
+new Product('pen', './img/pen.jpg');
+new Product('pet-sweep', './img/pet-sweep.jpg');
+new Product('scissors', './img/scissors.jpg');
+new Product('shark', './img/shark.jpg');
+new Product('sweep', './img/sweep.png');
+new Product('tauntaun', './img/tauntaun.jpg');
+new Product('unicorn', './img/unicorn.jpg');
+new Product('usb', './img/usb.gif');
+new Product('water-can', './img/water-can.jpg');
+new Product('wine-glass', './img/wine-glass.jpg');
 
 function randomImage() { //this function generates a random image from the allProducts array
   var firstRandom = Math.floor(Math.random() * allProducts.length);
@@ -68,10 +69,10 @@ function randomImage() { //this function generates a random image from the allPr
   thirdImage.src = allProducts[thirdRandom].imagePath;
 
   //alt. refers to the alt tag, anchored in html
-  //alt.text is the associate id text that will later appear in results render for all products
-  firstImage.alt = allProducts[firstRandom].altText;
-  secondImage.alt = allProducts[secondRandom].altText;
-  thirdImage.alt = allProducts[thirdRandom].altText;
+  //name is the associate id text that will later appear in results render for all products
+  firstImage.alt = allProducts[firstRandom].name;
+  secondImage.alt = allProducts[secondRandom].name;
+  thirdImage.alt = allProducts[thirdRandom].name;
 
   //counter for the number of views for each product
   allProducts[firstRandom].views++;
@@ -79,81 +80,81 @@ function randomImage() { //this function generates a random image from the allPr
   allProducts[secondRandom].views++;
 
   totalClicks++; //total clicks increments from 0 upwards to 25
-
-  if (totalClicks === 25) { //once the number of clicks reaches 25, the listener stops
+  console.log(totalClicks);
+  if (totalClicks === 26) { //once the number of clicks reaches 25, the listener stops
     firstImage.removeEventListener('click', handleImageClicks);
     secondImage.removeEventListener('click', handleImageClicks);
     thirdImage.removeEventListener('click', handleImageClicks);
     displayResults();
   }
 }
-function handleImageClicks(event) {
-  randomImage();
-
-  for (var i = 0; i < allProducts.length; i++) {
-    if (event.target.alt === allProducts[i].name) {
-      allProducts[i].votes++; //counting votes for each product
+function handleImageClicks(event) { //event handler is the action that takes place once there is a click
+  for (var i = 0; i < allProducts.length; i++) {//starting at index [0]; stopping at the length; increment by 1
+    if (event.target.alt === allProducts[i].name) { //if the alt id matches the name
+      allProducts[i].votes++; //count votes for each product
     }
   }
+  //votes++ in the line above makes sure that votes are calculated before the second set of random images are called
+  randomImage();
 }
-
-function displayResults() {
-  //use a for loop to iterate through the array:
-  for (var i = 0; i < allProducts.length; i++) { //starting at index [0]; stopping at the length; increment by 1
-    var listEl = document.createElement('li');
-    listEl.textContent = allProducts[i].votes + ' votes for the ' + allProducts[i].name + ' and ' + allProducts[i].views + ' views ';
-    results.appendChild(listEl);
+randomImage();
+function displayResults() {// CREATE CHART comparing names (of all products) and # of votes (for all products)
+  var names = [];
+  for (var i = 0; i < allProducts.length; i++) {
+    names.push(allProducts[i].name); // push values of allProducts into the names array
   }
-}
-randomImage();// call randomImages
 
-//
+  var votes = [];
+  for (var j = 0; j < allProducts.length; j++) {
+    votes.push(allProducts[j].votes); // push values of allProducts into the votes array
+    console.log('votes', votes);
+  }
+
+  var chartConfig = {
+    type: 'bar',
+    data: {
+      labels: names, //the name id for each product will be displayed on the graph
+      datasets: [{
+        label: 'Votes', //the label 'votes' will be displayed on the graph
+        data: votes,
+        backgroundColor: [
+          '#000000',
+          '#003333',
+          '#006666',
+          '#009999',
+          '#00cccc',
+          '#00ffff',
+          '#33ffff',
+          '#66ffff',
+          '#99ffff',
+          '#ccffff',
+          '#ffffcc',
+          '#ccffeb',
+          '#99ffd6',
+          '#66ffc2',
+          '#33ffad',
+          '#00ff99',
+          '#00cc7a',
+          '#00995c',
+          '#00663d',
+          '#00331f',
+        ],
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  };
+
+return new Chart(ctx, chartConfig);
+}
+
 firstImage.addEventListener('click', handleImageClicks);
 secondImage.addEventListener('click', handleImageClicks);
 thirdImage.addEventListener('click', handleImageClicks);
-
-//CREATE CHART
-var productsEl = document.getElementById('main-container');
-
-for(var i =0; i < allProducts.length; i++){
-  var pEl = document.createElement('p');
-  pEl.textContent = allProducts[i];
-
-  pEl.style.color = allProducts[i];
-  pEl.id = allProducts[i];
-
-  allProductsEl.appendChild(pEl);
-}
-
-var chartConfiguration = {
-  type: 'bar',
-  data: {
-    labels: names,
-    datasets: [{
-      label: 'Votes',
-      data: new Array(allProducts.length).fill(0),
-      backgroundColor: [
-        'red',
-        'orange',
-        'yellow',
-        'green',
-        'blue',
-        'indigo',
-        'violet',
-        '#790e08',
-        '#7d443d',
-        '#89a5bb',
-        '#ab831b',
-        '#ead83c',
-        '#22d7a5',
-        '#760567',
-        '#52f6bf',
-        '#30a702',
-        '#534317',
-        '#cf7e0b',
-        '#3017ec',
-        '#4f7c9a'
-      ],
-    }]
-  }
-};
