@@ -1,7 +1,7 @@
 'use strict';
 
 //global variables
-var ctx = document.getElementById("myChart").getContext('2d');
+var ctx = document.getElementById('myChart').getContext('2d');
 var totalClicks = 0;// this counter will eventually stop at 25 clicks
 var allProducts = []; //this array will hold all new instances of products which will be used later
 var previouslyDisplayed = []; //this array will hold sets of three images which will later be used to make sure there are no duplicates immediately after a set
@@ -9,7 +9,7 @@ var previouslyDisplayed = []; //this array will hold sets of three images which 
 var firstImage = document.getElementById('first');
 var secondImage = document.getElementById('second');
 var thirdImage = document.getElementById('third');
-var results = document.getElementById('results'); //this variable is a placeholder that will display voter results in html
+// var results = document.getElementById('results'); //this variable is a placeholder that will display voter results in html
 
 //this constructor will produce name, image, votes, and views for each new product
 function Product(name, imagePath) {
@@ -25,7 +25,7 @@ function Product(name, imagePath) {
 new Product('bag', './img/bag.jpg');
 new Product('banana', './img/banana.jpg');
 new Product('bathroom', './img/bathroom.jpg');
-new Product('boots', './img/boots.jpg', 'boots');
+new Product('boots', './img/boots.jpg');
 new Product('breakfast', './img/breakfast.jpg');
 new Product('bubblegum', './img/bubblegum.jpg');
 new Product('chair', './img/chair.jpg');
@@ -80,8 +80,8 @@ function randomImage() { //this function generates a random image from the allPr
   allProducts[secondRandom].views++;
 
   totalClicks++; //total clicks increments from 0 upwards to 25
-
-  if (totalClicks > 25) { //once the number of clicks reaches 25, the listener stops
+  console.log(totalClicks);
+  if (totalClicks === 26) { //once the number of clicks reaches 25, the listener stops
     firstImage.removeEventListener('click', handleImageClicks);
     secondImage.removeEventListener('click', handleImageClicks);
     thirdImage.removeEventListener('click', handleImageClicks);
@@ -89,8 +89,6 @@ function randomImage() { //this function generates a random image from the allPr
   }
 }
 function handleImageClicks(event) { //event handler is the action that takes place once there is a click
-  randomImage();
-
   for (var i = 0; i < allProducts.length; i++) {//starting at index [0]; stopping at the length; increment by 1
     if (event.target.alt === allProducts[i].name) { //if the alt id matches the name
       allProducts[i].votes++; //count votes for each product
@@ -105,10 +103,11 @@ function displayResults() {// CREATE CHART comparing names (of all products) and
   for (var i = 0; i < allProducts.length; i++) {
     names.push(allProducts[i].name); // push values of allProducts into the names array
   }
- 
+
   var votes = [];
   for (var j = 0; j < allProducts.length; j++) {
-    votes.push(allProducts[j].name); // push values of allProducts into the votes array
+    votes.push(allProducts[j].votes); // push values of allProducts into the votes array
+    console.log('votes', votes);
   }
 
   var chartConfig = {
@@ -119,26 +118,26 @@ function displayResults() {// CREATE CHART comparing names (of all products) and
         label: 'Votes', //the label 'votes' will be displayed on the graph
         data: votes,
         backgroundColor: [
-          'red',
-          'orange',
-          'yellow',
-          'green',
-          'blue',
-          'indigo',
-          'violet',
-          '#790e08',
-          '#7d443d',
-          '#89a5bb',
-          '#ab831b',
-          '#ead83c',
-          '#22d7a5',
-          '#760567',
-          '#52f6bf',
-          '#30a702',
-          '#534317',
-          '#cf7e0b',
-          '#3017ec',
-          '#4f7c9a'
+          '#000000',
+          '#003333',
+          '#006666',
+          '#009999',
+          '#00cccc',
+          '#00ffff',
+          '#33ffff',
+          '#66ffff',
+          '#99ffff',
+          '#ccffff',
+          '#ffffcc',
+          '#ccffeb',
+          '#99ffd6',
+          '#66ffc2',
+          '#33ffad',
+          '#00ff99',
+          '#00cc7a',
+          '#00995c',
+          '#00663d',
+          '#00331f',
         ],
       }]
     },
@@ -158,4 +157,4 @@ return new Chart(ctx, chartConfig);
 
 firstImage.addEventListener('click', handleImageClicks);
 secondImage.addEventListener('click', handleImageClicks);
-thirdImage.addEventListener('click', handleImageClicks)
+thirdImage.addEventListener('click', handleImageClicks);
