@@ -16,3 +16,10 @@ main {
     margin-left: auto;
     margin-right: auto;
 }
+
+h3 {
+    margin-top: 40px;
+    color: white;
+    font-size: 40px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
