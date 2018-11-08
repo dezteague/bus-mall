@@ -152,36 +152,43 @@ function displayResults() {// CREATE CHART comparing names (of all products) and
     }
   };
 
-  var myChart = new Chart(ctx, chartConfig);
-
   //LOCAL STORAGE FLOW:
   //  0. have data
   //  1. encode data [stringify]
   //  2. SET json data in local Storage
   //  3. GET jason data from local storage [upon page refresh]
   //  4. decode to javascript [parse]
+  
+  var myChart = new Chart(ctx, chartConfig);
 
+  var jsonMyChart = JSON.stringify(myChart);
 
-  if (localStorage.getItem('voteData')) {
-    var voteData = localStorage.getItem('voteData');
-    myChart.data.datasets[0].data = JSON.parse(voteData);
+  localStorage.setItem('myChart', jsonMyChart);
 
-    myChart.update();
-  }
+  localStorage.getItem('myChart');
+
+  myChart.data.database[0].data = JSON.parse('myChart');
+
+  // if (localStorage.getItem('voteData')) {
+  //   var voteData = localStorage.getItem('voteData');
+  //   myChart.data.datasets[0].data = JSON.parse(voteData);
+
+  //   myChart.update();
+  // }
 
   firstImage.addEventListener('click', handleImageClicks);
   secondImage.addEventListener('click', handleImageClicks);
   thirdImage.addEventListener('click', handleImageClicks);
 
-  var pId = event.target.id;
-  var idx = colors.indexOf(pId);
+  // var pId = event.target.id;
+  // var idx = colors.indexOf(pId);
 
-  if (idx !== -1) {
-    myChart.data.datasets[0].data[idx] += 1;
-    console.log(myChart.data.datasets[0].data);
-    myChart.update();
+  // if (idx !== -1) {
+  //   myChart.data.datasets[0].data[idx] += 1;
+  //   console.log(myChart.data.datasets[0].data);
+  //   myChart.update();
 
-    var jsonData = JSON.stringify(myChart.data.datasets[0].data);
-    localStorage.setItem('voteData', jsonData);
-  }
+  //   var jsonData = JSON.stringify(myChart.data.datasets[0].data);
+  //   localStorage.setItem('voteData', jsonData);
+  // }
 }
