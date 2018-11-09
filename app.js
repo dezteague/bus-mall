@@ -20,28 +20,33 @@ function Product(name, imagePath) {
 
   allProducts.push(this); //the keys in 'this' (name and imagePath) will be pushed into the products variable
 }
-//new product instantiates a new object for each image
-//each product contains (name, imagePath)
-new Product('bag', './img/bag.jpg');
-new Product('banana', './img/banana.jpg');
-new Product('bathroom', './img/bathroom.jpg');
-new Product('boots', './img/boots.jpg');
-new Product('breakfast', './img/breakfast.jpg');
-new Product('bubblegum', './img/bubblegum.jpg');
-new Product('chair', './img/chair.jpg');
-new Product('cthulhu', './img/cthulhu.jpg');
-new Product('dog-duck', './img/dog-duck.jpg');
-new Product('dragon', './img/dragon.jpg');
-new Product('pen', './img/pen.jpg');
-new Product('pet-sweep', './img/pet-sweep.jpg');
-new Product('scissors', './img/scissors.jpg');
-new Product('shark', './img/shark.jpg');
-new Product('sweep', './img/sweep.png');
-new Product('tauntaun', './img/tauntaun.jpg');
-new Product('unicorn', './img/unicorn.jpg');
-new Product('usb', './img/usb.gif');
-new Product('water-can', './img/water-can.jpg');
-new Product('wine-glass', './img/wine-glass.jpg');
+
+if (localStorage.productVotes) {
+  allProducts = JSON.parse(localStorage.getItem('productVotes'));
+} else {
+  //new product instantiates a new object for each image
+  //each product contains (name, imagePath)
+  new Product('bag', './img/bag.jpg');
+  new Product('banana', './img/banana.jpg');
+  new Product('bathroom', './img/bathroom.jpg');
+  new Product('boots', './img/boots.jpg');
+  new Product('breakfast', './img/breakfast.jpg');
+  new Product('bubblegum', './img/bubblegum.jpg');
+  new Product('chair', './img/chair.jpg');
+  new Product('cthulhu', './img/cthulhu.jpg');
+  new Product('dog-duck', './img/dog-duck.jpg');
+  new Product('dragon', './img/dragon.jpg');
+  new Product('pen', './img/pen.jpg');
+  new Product('pet-sweep', './img/pet-sweep.jpg');
+  new Product('scissors', './img/scissors.jpg');
+  new Product('shark', './img/shark.jpg');
+  new Product('sweep', './img/sweep.png');
+  new Product('tauntaun', './img/tauntaun.jpg');
+  new Product('unicorn', './img/unicorn.jpg');
+  new Product('usb', './img/usb.gif');
+  new Product('water-can', './img/water-can.jpg');
+  new Product('wine-glass', './img/wine-glass.jpg');
+}
 
 function randomImage() { //this function generates a random image from the allProducts array
   var firstRandom = Math.floor(Math.random() * allProducts.length);
@@ -86,6 +91,7 @@ function randomImage() { //this function generates a random image from the allPr
     secondImage.removeEventListener('click', handleImageClicks);
     thirdImage.removeEventListener('click', handleImageClicks);
     displayResults();
+    localStorage.setItem('productVotes', JSON.stringify(allProducts));
   }
 }
 function handleImageClicks(event) { //event handler is the action that takes place once there is a click
@@ -113,7 +119,7 @@ function displayResults() {// CREATE CHART comparing names (of all products) and
   var chartConfig = {
     type: 'bar',
     data: {
-      labels: names, //the name id for each product will be displayed on the graph
+      labels: names, //the all the values stored in the 'name' variable will be displayed on the graph
       datasets: [{
         label: 'Votes', //the label 'votes' will be displayed on the graph
         data: votes,
@@ -152,43 +158,41 @@ function displayResults() {// CREATE CHART comparing names (of all products) and
     }
   };
 
-  //LOCAL STORAGE FLOW:
-  //  0. have data
-  //  1. encode data [stringify]
-  //  2. SET json data in local Storage
-  //  3. GET jason data from local storage [upon page refresh]
-  //  4. decode to javascript [parse]
-  
-  var myChart = new Chart(ctx, chartConfig);
-
-  var jsonMyChart = JSON.stringify(myChart);
-
-  localStorage.setItem('myChart', jsonMyChart);
-
-  localStorage.getItem('myChart');
-
-  myChart.data.database[0].data = JSON.parse('myChart');
-
-  // if (localStorage.getItem('voteData')) {
-  //   var voteData = localStorage.getItem('voteData');
-  //   myChart.data.datasets[0].data = JSON.parse(voteData);
-
-  //   myChart.update();
-  // }
-
-  firstImage.addEventListener('click', handleImageClicks);
-  secondImage.addEventListener('click', handleImageClicks);
-  thirdImage.addEventListener('click', handleImageClicks);
-
-  // var pId = event.target.id;
-  // var idx = colors.indexOf(pId);
-
-  // if (idx !== -1) {
-  //   myChart.data.datasets[0].data[idx] += 1;
-  //   console.log(myChart.data.datasets[0].data);
-  //   myChart.update();
-
-  //   var jsonData = JSON.stringify(myChart.data.datasets[0].data);
-  //   localStorage.setItem('voteData', jsonData);
-  // }
+  return new Chart(ctx, chartConfig);
 }
+firstImage.addEventListener('click', handleImageClicks);
+secondImage.addEventListener('click', handleImageClicks);
+thirdImage.addEventListener('click', handleImageClicks);
+
+
+//NOTES ON LOCAL STORAGE FLOW:
+
+//  0. have data
+//  1. encode data [stringify]
+//  2. SET json data in local Storage
+//  3. GET jason data from local storage [upon page refresh]
+//  4. decode to javascript [parse]
+
+// var myChart = new Chart(ctx, chartConfig); --- this instantiates creating a new chart
+//
+// if (localStorage.getItem('voteData')) { ---- this checks to see if something already exists
+//   var voteData = localStorage.getItem('voteData');---- retrieve that data
+//   myChart.data.datasets[0].data = JSON.parse(voteData); ---- parse it, aka decode data for JS, then                                                                 you will need to recreate the object
+//                                                              OR update allProducts array
+
+//   myChart.update();
+// }
+
+// colorsEl.addEventListener('click;, function(event)) {
+
+// var pId = event.target.id; ---- the target of the click is the p tag id
+// var idx = colors.indexOf(pId); --- because we are storing what would be a value of the array, the                                         name of the variable is index
+
+// if (idx !== -1) { -1 is the result of anything outside of the array
+//   myChart.data.datasets[0].data[idx] += 1;
+//   console.log(myChart.data.datasets[0].data);
+//   myChart.update();
+
+//   var jsonData = JSON.stringify(myChart.data.datasets[0].data);
+//   localStorage.setItem('voteData', jsonData);
+// }
